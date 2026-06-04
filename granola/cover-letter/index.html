@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
   html {
-    background: transparent;
+    background: #4a4946;
   }
 
   :root {
@@ -23,14 +23,16 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: transparent;
+    background:
+      radial-gradient(circle at 50% 28%, rgba(245, 240, 232, 0.12), transparent 34rem),
+      #4a4946;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Special Elite', cursive;
     overflow-x: hidden;
-    padding: 40px 20px;
+    padding: 56px 24px;
   }
 
   body::before {
@@ -142,7 +144,7 @@
   .letter-wrap {
     display: none;
     width: 100%;
-    max-width: 480px;
+    max-width: min(680px, calc(100vw - 48px));
   }
 
   .letter-wrap.visible { display: block; }
@@ -372,6 +374,8 @@
   @keyframes fadein { to { opacity: 1; } }
 
   @media (max-width: 480px) {
+    body { padding: 48px 16px 32px; }
+    .letter-wrap { max-width: 100%; }
     .letter { padding: 44px 28px 48px; }
     .letter-signature { font-size: 24px; }
   }
@@ -429,11 +433,14 @@
     <div class="letter-date">London, March 2026</div>
 
     <!-- SWAP PER COMPANY -->
-    <div class="letter-salutation">Dear Granola team,</div>
+    <div class="letter-salutation">Dear Granola team</div>
 
     <div class="letter-body">
-      <p>I'm Piero, a digital product designer who wants to design the next generation of products. I'm good at understanding user needs, design interfaces, and optimize conversions.</p>
-      <p>I've spent the last 6 years understanding users to create products that drive impact. I've designed AI tools that move real numbers, in environments where getting it wrong meant factories stopped and recruiters lost clients.</p>
+      <p>I can see you want to build something bigger than note taking. Designing behaviours between humans and AI that don't exist yet is a hard problem, and that's why im doing this cringy presentation.</p>
+      <p>I have experience in environments where getting it wrong meant factories stopped and recruiters lost clients, and even then I designed AI tools that move real numbers: 40% cut in filtering time, 75 hours a week saved across four factory teams.</p>
+      <p>I'm good at sitting with uncertainty, doing the research, experimenting, and tracking what actually moves the needle.</p>
+      <p>I want to wake up every morning thinking about how to solve the problems that will shape how humans and AI work together.</p>
+      <p>That's why I'm here.</p>
     </div>
 
     <!-- <div class="proof">
@@ -455,24 +462,9 @@
       </div>
     </div> -->
 
-    <!-- SWAP IMAGE SRC with your hosted bag photo URL -->
-    <div class="bag-image-wrap">
-      <img src="[BAG_IMAGE]" alt="Handmade leather bag by Piero Rodriguez" onerror="this.parentElement.style.display='none'"/>
-      <div class="bag-caption">I made this bag. Same hands that design your product.</div>
-    </div>
 
-    <!-- SWAP the company-specific sentence -->
-    <div class="letter-closing">
-      I’m reaching out because I genuinely admire what you’re building, and I’d love to work on products like yours.<br><br>
-      Take this clutch I designed as a thank you note (pun intended) for making my notes much more useful after design crits.<br><br>
-      I love what you’re building, and I’d genuinely love to hear from you (even if I'm not the right fit atm).
-    </div>
 
     <div class="letter-signature">Piero</div>
-    <!-- SWAP EMAIL -->
-    <a class="letter-email" href="mailto:[YOUR_EMAIL]">[YOUR_EMAIL]</a><br>
-    <!-- SWAP PORTFOLIO URL -->
-    <a class="letter-email" href="[PORTFOLIO_URL]" target="_blank" style="margin-top:6px;">pierorodriguez.framer.website</a>
 
   </div>
 </div>

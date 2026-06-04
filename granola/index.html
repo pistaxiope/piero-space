@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIERO_RODRIGUEZ_2026 - Granola</title>
-  <meta name="description" content="Piero Rodriguez - product design, AI systems, London. Application context for Granola.">
+  <meta name="description" content="Piero Rodriguez - product design, AI systems, London.">
   <style>
     :root {
       --bg: #f8f8f7;
@@ -39,6 +39,25 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    body {
+      transition: background 0.28s ease, color 0.28s ease;
+    }
+
+    body.video-playing {
+      --bg: #11100e;
+      --surface: #191714;
+      --surface-soft: #24211d;
+      --chrome: #1f1d19;
+      --chrome-border: #3a352e;
+      --ink: #f5f0e8;
+      --ink-muted: #b9afa3;
+      --ink-faint: #83786c;
+      --border: #3d372f;
+      --border-light: #2f2a25;
+      --accent-soft: #2b2018;
+      --shadow: rgba(0, 0, 0, 0.28);
+    }
+
     body.modal-open {
       overflow: hidden;
     }
@@ -54,31 +73,26 @@
     }
 
     .page {
-      width: min(980px, calc(100% - 32px));
+      width: 100%;
       min-height: 100vh;
-      margin: 0 auto;
-      padding: 42px 0 34px;
-      display: flex;
-      align-items: center;
+      padding: 0;
     }
 
     .disk-window {
       width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--chrome-border);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 24px 72px var(--shadow);
+      background: transparent;
+      transition: background 0.28s ease;
     }
 
     .chrome-bar {
       min-height: 44px;
-      padding: 0 14px;
+      padding: 0 max(18px, calc((100vw - 980px) / 2));
       background: var(--chrome);
       border-bottom: 1px solid var(--chrome-border);
       display: flex;
       align-items: center;
       gap: 12px;
+      transition: background 0.28s ease, border-color 0.28s ease;
     }
 
     .traffic-lights {
@@ -116,15 +130,16 @@
     }
 
     .content {
-      padding: 34px;
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0;
     }
 
     .header {
       display: grid;
       grid-template-columns: 1fr;
       gap: 12px;
-      padding-bottom: 28px;
-      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 6px;
     }
 
     .title-row {
@@ -163,14 +178,6 @@
       flex: 0 0 auto;
     }
 
-    .intro {
-      max-width: 680px;
-      margin: 6px 0 0;
-      color: var(--ink-muted);
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
     .stack {
       display: flex;
       flex-direction: column;
@@ -181,10 +188,11 @@
     .module-card {
       min-width: 0;
       border: 1px solid var(--border);
-      border-radius: 9px;
+      border-radius: 8px;
       background: var(--surface);
       overflow: hidden;
       color: var(--ink);
+      transition: background 0.28s ease, border-color 0.28s ease, color 0.28s ease;
     }
 
     .card-header {
@@ -195,6 +203,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      transition: background 0.28s ease, border-color 0.28s ease;
     }
 
     .card-label {
@@ -251,23 +260,12 @@
       transform: none;
     }
 
-    .link-card.is-url:hover {
-      background: #f5f4f1;
-    }
-
     .card-title {
       margin: 0;
       font-family: var(--mono);
       font-size: 14px;
       letter-spacing: 0.03em;
       font-weight: 650;
-    }
-
-    .card-copy {
-      margin: 12px 0 0;
-      color: var(--ink-muted);
-      font-size: 14px;
-      line-height: 1.45;
     }
 
     .card-tag {
@@ -279,31 +277,13 @@
       white-space: nowrap;
     }
 
-    .is-url .card-tag {
-      color: var(--ink-faint);
-    }
-
-    .footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 16px;
-      border-top: 1px solid var(--chrome-border);
-      background: var(--chrome);
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--ink-muted);
-    }
-
     .modal-backdrop {
       position: fixed;
       inset: 0;
       z-index: 50;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-      background: rgba(0, 0, 0, 0.7);
+      display: block;
+      padding: 0;
+      background: rgba(22, 20, 18, 0.82);
       backdrop-filter: blur(14px);
       opacity: 0;
       pointer-events: none;
@@ -317,17 +297,12 @@
 
     .letter-modal {
       position: relative;
-      width: min(560px, 100%);
-      height: min(760px, calc(100vh - 56px));
-      border-radius: 10px;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
       overflow: hidden;
-      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.5);
-      transform: translateY(18px) scale(0.98);
-      transition: transform 0.2s ease;
-    }
-
-    .modal-backdrop.is-open .letter-modal {
-      transform: translateY(0) scale(1);
+      box-shadow: none;
     }
 
     .letter-modal iframe {
@@ -335,13 +310,13 @@
       height: 100%;
       border: 0;
       display: block;
-      background: transparent;
+      background: #4a4946;
     }
 
     .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+      position: fixed;
+      top: 18px;
+      right: 18px;
       z-index: 2;
       width: 38px;
       height: 38px;
@@ -362,28 +337,23 @@
 
     @media (max-width: 760px) {
       .page {
-        width: min(100% - 24px, 980px);
-        padding: 24px 0;
-        align-items: flex-start;
+        padding: 0;
       }
 
       .content {
-        padding: 22px;
+        width: min(100% - 24px, 980px);
+        padding: 24px 0;
       }
 
-      .footer {
-        flex-direction: column;
-        align-items: flex-start;
-      }
     }
 
     @media (max-width: 460px) {
       .content {
-        padding: 18px;
+        padding: 22px 0;
       }
 
       .chrome-bar {
-        padding: 0 10px;
+        padding: 0 12px;
       }
 
       .disk-path {
@@ -404,11 +374,12 @@
       }
 
       .modal-backdrop {
-        padding: 14px;
+        padding: 0;
       }
 
       .letter-modal {
-        height: calc(100vh - 28px);
+        height: 100vh;
+        height: 100dvh;
       }
     }
   </style>
@@ -443,10 +414,6 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span>disk status: surprisingly functional</span>
           </div>
-          <p class="intro">
-            Application context for Granola: a short intro video, a cover letter,
-            and the URLs that point to the rest of the work.
-          </p>
         </header>
 
         <div class="stack">
@@ -463,41 +430,46 @@
           </section>
 
           <section class="module-card">
+            <div class="card-header">
+              <span class="card-label">01_COVER_LETTER.TXT</span>
+              <span class="file-meta">2026-06-04 / text</span>
+            </div>
             <button class="action-card" type="button" data-letter-open>
               <span>
-                <p class="card-title">COVER_LETTER.TXT</p>
-                <p class="card-copy">The letter opens here as an overlay, so the disk stays in place.</p>
+                <p class="card-title">Cover letter</p>
               </span>
               <span class="card-tag">Open letter</span>
             </button>
           </section>
 
           <section class="module-card">
-            <a class="link-card is-url" href="[CV_URL]" target="_blank" rel="noopener noreferrer">
+            <div class="card-header">
+              <span class="card-label">02_CV.URL</span>
+              <span class="file-meta">2026-06-04 / link</span>
+            </div>
+            <a class="link-card is-url" href="https://drive.google.com/file/d/1O4o4tQgn4eowk-fynAqQDiuwqANW-iB1/view?usp=sharing" target="_blank" rel="noopener noreferrer" aria-label="Open CV in new tab">
               <span>
-                <p class="card-title">CV.URL</p>
-                <p class="card-copy">Background, education, founder work, and selected outcomes.</p>
+                <p class="card-title">CV</p>
               </span>
-              <span class="card-tag">External URL</span>
+              <span class="card-tag">Open CV</span>
             </a>
           </section>
 
           <section class="module-card">
-            <a class="link-card is-url" href="https://pierorodriguez.framer.website/" target="_blank" rel="noopener noreferrer">
+            <div class="card-header">
+              <span class="card-label">03_PORTFOLIO.URL</span>
+              <span class="file-meta">2026-06-04 / link</span>
+            </div>
+            <a class="link-card is-url" href="https://pierorodriguez.framer.website/" target="_blank" rel="noopener noreferrer" aria-label="Open portfolio in new tab">
               <span>
-                <p class="card-title">PORTFOLIO.URL</p>
-                <p class="card-copy">Product, AI, systems, and visual development work.</p>
+                <p class="card-title">Portfolio</p>
               </span>
-              <span class="card-tag">External URL</span>
+              <span class="card-tag">Open portfolio</span>
             </a>
           </section>
         </div>
       </div>
 
-      <footer class="footer">
-        <span>3 items + one letter</span>
-        <span>Piero Rodriguez / London / Granola</span>
-      </footer>
     </section>
   </main>
 
@@ -512,6 +484,11 @@
     const letterModal = document.getElementById('letterModal');
     const openLetterLinks = document.querySelectorAll('[data-letter-open]');
     const closeLetterButtons = document.querySelectorAll('[data-letter-close]');
+    const introVideo = document.querySelector('video');
+
+    function setVideoTheme(isPlaying) {
+      document.body.classList.toggle('video-playing', isPlaying);
+    }
 
     function openLetter(event) {
       event.preventDefault();
@@ -532,6 +509,18 @@
 
     closeLetterButtons.forEach((button) => {
       button.addEventListener('click', closeLetter);
+    });
+
+    introVideo.addEventListener('play', () => {
+      setVideoTheme(true);
+    });
+
+    introVideo.addEventListener('pause', () => {
+      setVideoTheme(false);
+    });
+
+    introVideo.addEventListener('ended', () => {
+      setVideoTheme(false);
     });
 
     letterModal.addEventListener('click', (event) => {
