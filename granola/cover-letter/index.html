@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A letter for you</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  html {
+    background: transparent;
+  }
+
+  :root {
+    --paper: #f5f0e8;
+    --paper-dark: #ede5d0;
+    --ink: #1a1410;
+    --ink-faded: #4a3f35;
+    --wax: #8b1a1a;
+    --envelope: #d4c5a9;
+    --envelope-dark: #b8a88a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: transparent;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Special Elite', cursive;
+    overflow-x: hidden;
+    padding: 40px 20px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.4;
+  }
+
+  /* ENVELOPE */
+  .scene {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .envelope-wrap {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .envelope-wrap:hover { transform: translateY(-4px); }
+
+  .envelope {
+    width: 100%;
+    background: var(--envelope);
+    border-radius: 4px;
+    padding: 40px 36px 36px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3);
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .envelope::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, var(--envelope-dark) 0%, transparent 50%),
+      linear-gradient(225deg, var(--envelope-dark) 0%, transparent 50%);
+    border-radius: 4px;
+    opacity: 0.4;
+  }
+
+  .envelope::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0,0,0,0.06), transparent);
+    border-radius: 0 0 4px 4px;
+  }
+
+  .envelope-address {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .envelope-address .to {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-faded);
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+
+  .envelope-address .recipient {
+    font-family: 'Special Elite', cursive;
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+
+  .wax-stamp {
+    position: relative;
+    z-index: 10;
+    margin-top: 28px;
+    width: 72px;
+    height: 72px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .wax-stamp:hover { transform: scale(1.05); }
+  .wax-stamp svg { width: 100%; height: 100%; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); }
+
+  .stamp-hint {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--ink-faded);
+    opacity: 0.6;
+    margin-top: 12px;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+
+  /* LETTER */
+  .letter-wrap {
+    display: none;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .letter-wrap.visible { display: block; }
+
+  .letter {
+    background: var(--paper);
+    padding: 52px 44px 52px;
+    position: relative;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.5),
+      0 2px 4px rgba(0,0,0,0.2),
+      inset 0 0 80px rgba(0,0,0,0.03);
+    transform-origin: top center;
+    animation: unfold 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .letter::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 33.33%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.07), transparent);
+  }
+
+  .letter::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 66.66%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.07), transparent);
+  }
+
+  .fold-shadow-top {
+    position: absolute;
+    top: 33.33%; left: 0; right: 0;
+    height: 10px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent);
+    pointer-events: none;
+  }
+
+  .fold-shadow-mid {
+    position: absolute;
+    top: 66.66%; left: 0; right: 0;
+    height: 10px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent);
+    pointer-events: none;
+  }
+
+  @keyframes unfold {
+    0%   { transform: scaleY(0.05) translateY(-40px); opacity: 0; }
+    40%  { opacity: 1; }
+    100% { transform: scaleY(1) translateY(0); opacity: 1; }
+  }
+
+  /* WAX REMNANT — clickable to re-close */
+  .wax-remnant {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    animation: fadein 0.3s ease 0.5s forwards;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s ease;
+    text-align: center;
+  }
+
+  .wax-remnant:hover { transform: translateX(-50%) scale(1.08); }
+
+  .wax-remnant svg {
+    width: 44px;
+    height: 44px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+    display: block;
+    margin: 0 auto;
+  }
+
+  .reclose-hint {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 10px;
+    color: var(--ink-faded);
+    text-align: center;
+    margin-top: 5px;
+    opacity: 0;
+    animation: fadein 0.3s ease 2.2s forwards;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  /* LETTER CONTENT */
+  .letter-date {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--ink-faded);
+    letter-spacing: 0.06em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadein 0.4s ease 0.6s forwards;
+  }
+
+  .letter-salutation {
+    font-family: 'Special Elite', cursive;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadein 0.4s ease 0.75s forwards;
+  }
+
+  .letter-body {
+    font-family: 'Special Elite', cursive;
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.85;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadein 0.4s ease 0.9s forwards;
+  }
+
+  .letter-body p { margin-bottom: 16px; }
+  .letter-body p:last-child { margin-bottom: 0; }
+
+  .proof {
+    font-family: 'Special Elite', cursive;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 2;
+    margin: 24px 0;
+    padding: 20px 24px;
+    background: var(--paper-dark);
+    border-radius: 2px;
+    opacity: 0;
+    animation: fadein 0.4s ease 1.05s forwards;
+  }
+
+  .proof-item {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+
+  .proof-item:last-child { margin-bottom: 0; }
+  .proof-dash { color: var(--wax); flex-shrink: 0; }
+
+  .proof-link {
+    color: var(--wax);
+    text-decoration: none;
+    border-bottom: 1px solid var(--wax);
+    padding-bottom: 1px;
+    transition: opacity 0.2s;
+  }
+
+  .proof-link:hover { opacity: 0.65; }
+
+  .proof-divider {
+    border: none;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    margin: 12px 0;
+  }
+
+  .bag-image-wrap {
+    margin: 28px -8px;
+    opacity: 0;
+    animation: fadein 0.5s ease 1.2s forwards;
+  }
+
+  .bag-image-wrap img {
+    width: 100%;
+    border-radius: 2px;
+    display: block;
+    filter: sepia(15%) contrast(1.05);
+  }
+
+  .bag-caption {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 11.5px;
+    color: var(--ink-faded);
+    text-align: center;
+    margin-top: 8px;
+    opacity: 0.7;
+    letter-spacing: 0.04em;
+  }
+
+  .letter-closing {
+    font-family: 'Special Elite', cursive;
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.8;
+    margin-top: 28px;
+    opacity: 0;
+    animation: fadein 0.4s ease 1.35s forwards;
+  }
+
+  .letter-signature {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: var(--ink);
+    margin-top: 20px;
+    margin-bottom: 6px;
+    opacity: 0;
+    animation: fadein 0.4s ease 1.5s forwards;
+  }
+
+  .letter-email {
+    display: inline-block;
+    font-family: 'Special Elite', cursive;
+    font-size: 12px;
+    color: var(--wax);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-bottom: 1px solid var(--wax);
+    padding-bottom: 1px;
+    margin-top: 4px;
+    opacity: 0;
+    animation: fadein 0.4s ease 1.65s forwards;
+    transition: opacity 0.2s;
+  }
+
+  .letter-email:hover { opacity: 0.65; }
+
+  @keyframes fadein { to { opacity: 1; } }
+
+  @media (max-width: 480px) {
+    .letter { padding: 44px 28px 48px; }
+    .letter-signature { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ENVELOPE -->
+<div class="scene" id="envelopeScene">
+  <div class="envelope-wrap" onclick="breakWax()">
+    <div class="envelope">
+      <div class="envelope-address">
+        <div class="to">for the team at</div>
+        <!-- SWAP PER COMPANY -->
+        <div class="recipient">Granola</div>
+      </div>
+      <div class="wax-stamp" id="envelopeStamp">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="36" fill="#8b1a1a"/>
+          <circle cx="40" cy="40" r="32" fill="#a01f1f"/>
+          <circle cx="40" cy="40" r="28" fill="none" stroke="#c0392b" stroke-width="1" opacity="0.4"/>
+          <text x="40" y="47" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="bold" fill="#f5f0e8" opacity="0.9">P</text>
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#c0392b" stroke-width="0.5" opacity="0.5" stroke-dasharray="3,3"/>
+        </svg>
+      </div>
+      <div class="stamp-hint" id="stampHint">— tap to open —</div>
+    </div>
+  </div>
+</div>
+
+<!-- LETTER -->
+<div class="letter-wrap" id="letterWrap">
+  <div class="letter">
+
+    <!-- Cracked wax — tap to re-close -->
+    <div class="wax-remnant" onclick="reclose()">
+      <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M40,10 A30,30 0 0,0 10,40 L40,40 Z" fill="#8b1a1a" opacity="0.75"/>
+        <path d="M40,10 A30,30 0 0,1 70,40 L40,40 Z" fill="#7a1616" opacity="0.75"/>
+        <path d="M10,40 A30,30 0 0,0 40,70 L40,40 Z" fill="#6d1212" opacity="0.65"/>
+        <path d="M70,40 A30,30 0 0,1 40,70 L40,40 Z" fill="#7a1616" opacity="0.65"/>
+        <line x1="40" y1="40" x2="58" y2="14" stroke="#f5f0e8" stroke-width="1.2" opacity="0.5"/>
+        <line x1="40" y1="40" x2="22" y2="16" stroke="#f5f0e8" stroke-width="0.8" opacity="0.4"/>
+        <line x1="40" y1="40" x2="68" y2="52" stroke="#f5f0e8" stroke-width="0.8" opacity="0.35"/>
+        <line x1="40" y1="40" x2="14" y2="56" stroke="#f5f0e8" stroke-width="0.6" opacity="0.3"/>
+        <text x="40" y="47" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#f5f0e8" opacity="0.5">P</text>
+      </svg>
+      <div class="reclose-hint">— tap to close —</div>
+    </div>
+
+    <div class="fold-shadow-top"></div>
+    <div class="fold-shadow-mid"></div>
+
+    <!-- SWAP DATE if needed -->
+    <div class="letter-date">London, March 2026</div>
+
+    <!-- SWAP PER COMPANY -->
+    <div class="letter-salutation">Dear Granola team,</div>
+
+    <div class="letter-body">
+      <p>I'm Piero, a digital product designer who wants to design the next generation of products. I'm good at understanding user needs, design interfaces, and optimize conversions.</p>
+      <p>I've spent the last 6 years understanding users to create products that drive impact. I've designed AI tools that move real numbers, in environments where getting it wrong meant factories stopped and recruiters lost clients.</p>
+    </div>
+
+    <!-- <div class="proof">
+      <div class="proof-item">
+        <span class="proof-dash">—</span>
+        <span>Shipped AI candidate search in 2021, before ChatGPT. Cut filtering time by 40%.</span>
+      </div>
+      <div class="proof-item">
+        <span class="proof-dash">—</span>
+        <span>Designed an ERP across 4 factories. 75 hours saved per week on first release.</span>
+      </div>
+      <div class="proof-item">
+        <span class="proof-dash">—</span>
+        <span>Built an AI documentation agent used by 50 people across 3 teams.</span>
+      </div>
+      <div class="proof-item">
+        <span class="proof-dash">—</span>
+        <span>One of my designs reached the International Space Station.</span>
+      </div>
+    </div> -->
+
+    <!-- SWAP IMAGE SRC with your hosted bag photo URL -->
+    <div class="bag-image-wrap">
+      <img src="[BAG_IMAGE]" alt="Handmade leather bag by Piero Rodriguez" onerror="this.parentElement.style.display='none'"/>
+      <div class="bag-caption">I made this bag. Same hands that design your product.</div>
+    </div>
+
+    <!-- SWAP the company-specific sentence -->
+    <div class="letter-closing">
+      I’m reaching out because I genuinely admire what you’re building, and I’d love to work on products like yours.<br><br>
+      Take this clutch I designed as a thank you note (pun intended) for making my notes much more useful after design crits.<br><br>
+      I love what you’re building, and I’d genuinely love to hear from you (even if I'm not the right fit atm).
+    </div>
+
+    <div class="letter-signature">Piero</div>
+    <!-- SWAP EMAIL -->
+    <a class="letter-email" href="mailto:[YOUR_EMAIL]">[YOUR_EMAIL]</a><br>
+    <!-- SWAP PORTFOLIO URL -->
+    <a class="letter-email" href="[PORTFOLIO_URL]" target="_blank" style="margin-top:6px;">pierorodriguez.framer.website</a>
+
+  </div>
+</div>
+
+<script>
+  function breakWax() {
+    const envelope = document.getElementById('envelopeScene');
+    const letter   = document.getElementById('letterWrap');
+
+    envelope.style.transition = 'transform 0.1s ease, opacity 0.4s ease';
+    envelope.style.transform  = 'scale(0.97) rotate(-1deg)';
+
+    setTimeout(() => { envelope.style.transform = 'scale(1.02) rotate(0.5deg)'; }, 100);
+
+    setTimeout(() => {
+      envelope.style.opacity   = '0';
+      envelope.style.transform = 'scale(0.95) translateY(20px)';
+    }, 200);
+
+    setTimeout(() => {
+      envelope.style.display = 'none';
+      letter.classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 500);
+  }
+
+  function reclose() {
+    const envelope = document.getElementById('envelopeScene');
+    const letter   = document.getElementById('letterWrap');
+
+    letter.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    letter.style.opacity    = '0';
+    letter.style.transform  = 'scaleY(0.05) translateY(-40px)';
+
+    setTimeout(() => {
+      letter.classList.remove('visible');
+      letter.style.opacity   = '';
+      letter.style.transform = '';
+
+      // Update envelope stamp to cracked state
+      document.getElementById('envelopeStamp').innerHTML = `
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4))">
+          <path d="M40,10 A30,30 0 0,0 10,40 L40,40 Z" fill="#8b1a1a" opacity="0.75"/>
+          <path d="M40,10 A30,30 0 0,1 70,40 L40,40 Z" fill="#7a1616" opacity="0.75"/>
+          <path d="M10,40 A30,30 0 0,0 40,70 L40,40 Z" fill="#6d1212" opacity="0.65"/>
+          <path d="M70,40 A30,30 0 0,1 40,70 L40,40 Z" fill="#7a1616" opacity="0.65"/>
+          <line x1="40" y1="40" x2="58" y2="14" stroke="#f5f0e8" stroke-width="1.2" opacity="0.5"/>
+          <line x1="40" y1="40" x2="22" y2="16" stroke="#f5f0e8" stroke-width="0.8" opacity="0.4"/>
+          <line x1="40" y1="40" x2="68" y2="52" stroke="#f5f0e8" stroke-width="0.8" opacity="0.35"/>
+          <text x="40" y="47" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#f5f0e8" opacity="0.5">P</text>
+        </svg>`;
+      document.getElementById('stampHint').textContent = '— already opened —';
+
+      envelope.style.display    = '';
+      envelope.style.opacity    = '0';
+      envelope.style.transform  = 'scale(0.95) translateY(20px)';
+      envelope.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        envelope.style.opacity   = '1';
+        envelope.style.transform = 'scale(1) translateY(0)';
+      }));
+    }, 200);
+  }
+</script>
+
+</body>
+</html>

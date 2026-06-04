@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIERO_RODRIGUEZ_2026 — Disk Contents</title>
+  <meta name="description" content="Piero Rodriguez — product design, AI systems, London. Disk contents: video, cover letter, CV, portfolio.">
+  <style>
+    :root {
+      --bg: #f8f8f7;
+      --surface: #ffffff;
+      --chrome: #f0efee;
+      --chrome-border: #d8d6d2;
+      --header-bg: #e8e6e2;
+      --ink: #1a1917;
+      --ink-muted: #6b6762;
+      --ink-faint: #a8a5a0;
+      --row-hover: #f3f2f0;
+      --row-selected: #d8e8f8;
+      --row-selected-border: #b0cfe8;
+      --accent: #c8611a;
+      --accent-soft: #f5ece3;
+      --border: #d8d6d2;
+      --border-light: #e8e6e2;
+      --mono: ui-monospace, "SF Mono", "Fira Code", "Cascadia Code", "Menlo", "Consolas", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Page shell ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px 32px;
+    }
+
+    /* ── Finder window ── */
+    .finder {
+      width: min(720px, 100%);
+      border: 1px solid var(--chrome-border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    /* ── Window chrome bar ── */
+    .chrome-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+      height: 42px;
+      background: var(--chrome);
+      border-bottom: 1px solid var(--chrome-border);
+      user-select: none;
+    }
+
+    .chrome-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .traffic-lights {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .tl {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 0.5px solid rgba(0,0,0,0.12);
+    }
+
+    .tl-red    { background: #ff5f57; }
+    .tl-yellow { background: #febc2e; }
+    .tl-green  { background: #28c840; }
+
+    .disk-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+    }
+
+    .disk-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .disk-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .disk-name {
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .chrome-right {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-muted);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #28c840;
+      margin-right: 5px;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+
+    /* ── Column header row ── */
+    .col-header {
+      display: grid;
+      grid-template-columns: 1fr 160px 100px 120px;
+      align-items: center;
+      padding: 0 16px;
+      height: 26px;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .col-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: default;
+      user-select: none;
+    }
+
+    .col-label.right {
+      text-align: right;
+    }
+
+    /* ── File list ── */
+    .file-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── Individual file row ── */
+    .file-row {
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .file-row:last-child {
+      border-bottom: none;
+    }
+
+    .file-row-inner {
+      display: grid;
+      grid-template-columns: 1fr 160px 100px 120px;
+      align-items: center;
+      padding: 0 16px;
+      height: 40px;
+      cursor: pointer;
+      transition: background 0.08s ease;
+      outline: none;
+    }
+
+    .file-row-inner:hover {
+      background: var(--row-hover);
+    }
+
+    .file-row-inner:focus-visible {
+      outline: 2px solid var(--row-selected-border);
+      outline-offset: -2px;
+    }
+
+    .file-row.is-selected .file-row-inner {
+      background: var(--row-selected);
+    }
+
+    .file-row.is-selected .file-row-inner:hover {
+      background: var(--row-selected);
+    }
+
+    /* File name cell */
+    .cell-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .file-chevron {
+      font-size: 10px;
+      color: var(--ink-muted);
+      flex-shrink: 0;
+      width: 12px;
+      text-align: center;
+      transition: transform 0.2s ease;
+      font-family: var(--mono);
+      line-height: 1;
+    }
+
+    .file-row.is-expanded .file-chevron {
+      transform: rotate(90deg);
+    }
+
+    .file-name-text {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Other cells */
+    .cell-type {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--ink-muted);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cell-size {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--ink-muted);
+      text-align: right;
+      padding-right: 8px;
+    }
+
+    .cell-modified {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--ink-muted);
+      text-align: right;
+    }
+
+    /* ── Video expansion panel ── */
+    .video-panel {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #fafaf9;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .file-row.is-expanded .video-panel {
+      max-height: 480px;
+    }
+
+    .video-panel-inner {
+      padding: 16px 16px 16px 36px;
+    }
+
+    .video-embed {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .video-embed-placeholder {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    /* ── Footer ── */
+    .finder-footer {
+      padding: 7px 16px;
+      background: var(--chrome);
+      border-top: 1px solid var(--chrome-border);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-sep {
+      color: var(--border);
+    }
+
+    /* ── Below-window caption ── */
+    .page-caption {
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    /* ── Mobile: hide TYPE and SIZE columns ── */
+    @media (max-width: 560px) {
+      .col-header {
+        grid-template-columns: 1fr 0 0 100px;
+      }
+
+      .file-row-inner {
+        grid-template-columns: 1fr 0 0 100px;
+      }
+
+      .col-label.hide-mobile,
+      .cell-type,
+      .cell-size {
+        display: none;
+      }
+
+      .chrome-right {
+        display: none;
+      }
+
+      .disk-name {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .page {
+        padding: 20px 12px 24px;
+      }
+
+      .file-row-inner {
+        padding: 0 10px;
+      }
+
+      .video-panel-inner {
+        padding: 12px 10px 12px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="finder" role="main" aria-label="Floppy disk contents">
+
+      <!-- Window chrome -->
+      <div class="chrome-bar" aria-hidden="true">
+        <div class="chrome-left">
+          <div class="traffic-lights">
+            <div class="tl tl-red"></div>
+            <div class="tl tl-yellow"></div>
+            <div class="tl tl-green"></div>
+          </div>
+          <div class="disk-label">
+            <span class="disk-icon" title="Floppy disk">
+              <!-- Floppy disk SVG icon -->
+              <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="1.5" y="1.5" width="15" height="15" rx="1.5" fill="#4a4845" stroke="#2a2825" stroke-width="0.75"/>
+                <rect x="3.5" y="1.5" width="8" height="6" rx="0.5" fill="#c8c4be"/>
+                <rect x="8.5" y="2" width="2" height="5" rx="0.25" fill="#7a7772"/>
+                <rect x="3" y="9.5" width="12" height="6" rx="0.5" fill="#d8d4ce"/>
+                <rect x="5" y="11" width="8" height="3" rx="0.25" fill="#b8b4ae"/>
+              </svg>
+            </span>
+            <span class="disk-name">PIERO_RODRIGUEZ_2026</span>
+          </div>
+        </div>
+        <div class="chrome-right">
+          <span class="status-dot"></span>disk status: surprisingly functional
+        </div>
+      </div>
+
+      <!-- Column headers -->
+      <div class="col-header" role="row" aria-hidden="true">
+        <div class="col-label">NAME</div>
+        <div class="col-label hide-mobile">TYPE</div>
+        <div class="col-label right hide-mobile">SIZE</div>
+        <div class="col-label right">MODIFIED</div>
+      </div>
+
+      <!-- File list -->
+      <ul class="file-list" role="list" aria-label="Disk contents">
+
+        <!-- VIDEO.MP4 — expandable -->
+        <li class="file-row" id="row-video" role="listitem">
+          <div
+            class="file-row-inner"
+            tabindex="0"
+            role="button"
+            aria-expanded="false"
+            aria-controls="panel-video"
+            aria-label="VIDEO.MP4 — click to expand video"
+            data-action="toggle-video"
+          >
+            <div class="cell-name">
+              <span class="file-chevron" aria-hidden="true">&#9654;</span>
+              <span class="file-name-text">VIDEO.MP4</span>
+            </div>
+            <div class="cell-type">video/mp4</div>
+            <div class="cell-size">847 MB</div>
+            <div class="cell-modified">2026-06-04</div>
+          </div>
+          <div class="video-panel" id="panel-video" aria-hidden="true">
+            <div class="video-panel-inner">
+              <div class="video-embed" role="img" aria-label="Video placeholder — embed to be wired in">
+                <div class="video-embed-placeholder">Video loading&hellip;</div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- COVER_LETTER.TXT — navigates to cover-letter/index.html -->
+        <li class="file-row" id="row-letter" role="listitem">
+          <a
+            class="file-row-inner"
+            href="cover-letter/index.html"
+            tabindex="0"
+            aria-label="COVER_LETTER.TXT — open cover letter"
+            data-action="navigate"
+          >
+            <div class="cell-name">
+              <span class="file-chevron" aria-hidden="true">&#9654;</span>
+              <span class="file-name-text">COVER_LETTER.TXT</span>
+            </div>
+            <div class="cell-type">text/plain</div>
+            <div class="cell-size">4 KB</div>
+            <div class="cell-modified">2026-06-04</div>
+          </a>
+        </li>
+
+        <!-- CV.PDF — opens in new tab -->
+        <li class="file-row" id="row-cv" role="listitem">
+          <a
+            class="file-row-inner"
+            href="[CV_URL]"
+            target="_blank"
+            rel="noopener noreferrer"
+            tabindex="0"
+            aria-label="CV.PDF — open CV in new tab"
+            data-action="navigate"
+          >
+            <div class="cell-name">
+              <span class="file-chevron" aria-hidden="true">&#9654;</span>
+              <span class="file-name-text">CV.PDF</span>
+            </div>
+            <div class="cell-type">application/pdf</div>
+            <div class="cell-size">280 KB</div>
+            <div class="cell-modified">2026-06-04</div>
+          </a>
+        </li>
+
+        <!-- PORTFOLIO.URL — opens in new tab -->
+        <li class="file-row" id="row-portfolio" role="listitem">
+          <a
+            class="file-row-inner"
+            href="[PORTFOLIO_URL]"
+            target="_blank"
+            rel="noopener noreferrer"
+            tabindex="0"
+            aria-label="PORTFOLIO.URL — open portfolio in new tab"
+            data-action="navigate"
+          >
+            <div class="cell-name">
+              <span class="file-chevron" aria-hidden="true">&#9654;</span>
+              <span class="file-name-text">PORTFOLIO.URL</span>
+            </div>
+            <div class="cell-type">url/shortcut</div>
+            <div class="cell-size">1 KB</div>
+            <div class="cell-modified">2026-06-04</div>
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Finder-style status footer -->
+      <div class="finder-footer" aria-label="Disk status">
+        <span>4 items</span>
+        <span class="footer-sep">·</span>
+        <span>847.3 MB used</span>
+        <span class="footer-sep">·</span>
+        <span>Piero Rodriguez, London</span>
+      </div>
+
+    </div>
+
+    <p class="page-caption">FLOPPY_DISK_CONTENTS &nbsp;/&nbsp; double-clicked 2026-06-04</p>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var videoRow   = document.getElementById('row-video');
+      var videoPanel = document.getElementById('panel-video');
+      var videoBtn   = videoRow.querySelector('[data-action="toggle-video"]');
+
+      // Track which row is "selected" (highlighted blue)
+      var selectedRow = null;
+
+      function selectRow(rowEl) {
+        if (selectedRow && selectedRow !== rowEl) {
+          selectedRow.classList.remove('is-selected');
+        }
+        if (rowEl) {
+          rowEl.classList.add('is-selected');
+          selectedRow = rowEl;
+        }
+      }
+
+      // ── Video toggle ──
+      function toggleVideo() {
+        var isExpanded = videoRow.classList.contains('is-expanded');
+
+        if (isExpanded) {
+          videoRow.classList.remove('is-expanded');
+          videoBtn.setAttribute('aria-expanded', 'false');
+          videoPanel.setAttribute('aria-hidden', 'true');
+        } else {
+          videoRow.classList.add('is-expanded');
+          videoBtn.setAttribute('aria-expanded', 'true');
+          videoPanel.setAttribute('aria-hidden', 'false');
+        }
+
+        selectRow(videoRow);
+      }
+
+      videoBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        toggleVideo();
+      });
+
+      videoBtn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleVideo();
+        }
+      });
+
+      // ── Link rows: select on click/focus ──
+      var linkRows = document.querySelectorAll('.file-row [data-action="navigate"]');
+
+      linkRows.forEach(function (el) {
+        var rowEl = el.closest('.file-row');
+
+        el.addEventListener('click', function () {
+          selectRow(rowEl);
+        });
+
+        el.addEventListener('focus', function () {
+          selectRow(rowEl);
+        });
+      });
+
+      // ── Video row focus ──
+      videoBtn.addEventListener('focus', function () {
+        selectRow(videoRow);
+      });
+
+    })();
+  </script>
+</body>
+</html>
