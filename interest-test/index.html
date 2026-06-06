@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interest Button Test</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8f8f7;
+      --ink: #191816;
+      --muted: #6a665f;
+      --border: #dad7d1;
+      --surface: #ffffff;
+      --accent: #c8611a;
+      --accent-soft: #f7ece2;
+      --mono: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: var(--sans);
+    }
+
+    main {
+      width: min(100%, 460px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 24px;
+    }
+
+    .label,
+    .status {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 10px 0 14px;
+      font-family: var(--mono);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    button {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--accent-soft);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 650;
+      padding: 14px 16px;
+    }
+
+    button:disabled {
+      cursor: default;
+      opacity: 0.72;
+    }
+
+    .status {
+      min-height: 18px;
+      margin-top: 14px;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="label">/VERCEL/INTEREST_TEST</div>
+    <h1>Signal button</h1>
+    <p>This page tests the click flow without touching the live Granola artifact.</p>
+    <button type="button" id="interestButton">I'm interested in talking with you</button>
+    <div class="status" id="status" aria-live="polite"></div>
+  </main>
+
+  <script>
+    const button = document.getElementById('interestButton');
+    const status = document.getElementById('status');
+
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      status.textContent = 'sending signal...';
+
+      try {
+        const response = await fetch('/api/interest-test', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            artifact: 'interest-test',
+            page: window.location.href,
+            clickedAt: new Date().toISOString()
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Signal failed');
+        }
+
+        button.textContent = 'Signal received';
+        status.textContent = 'notification route worked';
+      } catch (error) {
+        button.disabled = false;
+        status.textContent = 'signal failed';
+      }
+    });
+  </script>
+</body>
+</html>
