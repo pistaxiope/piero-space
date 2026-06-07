@@ -69,6 +69,16 @@ export function mountIntroMap(root) {
     const description = String(data.get("description") || "").trim();
     const postLtwAiCircle = data.get("post_ltw_ai_circle") === "on";
 
+    const nextDraft = {
+      ...draft,
+      name,
+      linkedin_url: linkedin,
+      company_project: companyProject,
+      description,
+      post_ltw_ai_circle: postLtwAiCircle,
+    };
+    draft = nextDraft;
+
     if (!name) {
       error = "Name is required.";
       render();
@@ -80,15 +90,6 @@ export function mountIntroMap(root) {
       render();
       return;
     }
-
-    const nextDraft = {
-      ...draft,
-      name,
-      linkedin_url: linkedin,
-      company_project: companyProject,
-      description,
-      post_ltw_ai_circle: postLtwAiCircle,
-    };
 
     draft = {
       ...nextDraft,
