@@ -390,6 +390,52 @@ textarea::placeholder {
   font-size: 34px;
 }
 
+.admin-login {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  gap: 12px;
+}
+
+.admin-login-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-login-form input {
+  flex: 1 1 220px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.admin-login-form button {
+  padding: 12px 18px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--bg, #0c0d08);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.admin-error {
+  color: #e8736b;
+  font-size: 14px;
+}
+
+.admin-logout {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
 .response-table-wrap {
   max-width: 1080px;
   margin: 0 auto;

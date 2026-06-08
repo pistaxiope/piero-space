@@ -6,12 +6,28 @@ export async function saveIntroResponse(payload) {
     created_at: new Date().toISOString(),
     ...payload,
   };
-  const current = getIntroResponses();
+
+  try {
+    const res = await fetch("/api/intro", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.response) return data.response;
+    }
+  } catch (error) {
+    console.log("[v0] saveIntroResponse failed, falling back to localStorage:", error.message);
+  }
+
+  // Offline / failure fallback so the visitor still gets their card.
+  const current = getLocalResponses();
   localStorage.setItem(STORAGE_KEY, JSON.stringify([response, ...current]));
   return response;
 }
 
-export function getIntroResponses() {
+export function getLocalResponses() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
   } catch {
